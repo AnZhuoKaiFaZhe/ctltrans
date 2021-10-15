@@ -46,9 +46,9 @@ struct Tree {
                 PrintFormula();
             }
             else if(FlagTemp==1){
-                children[0].midOrder();
-                printf("U ");
-                children[1].midOrder();
+                children[0].PrintFormula();
+                printf("U");
+                children[1].PrintFormula();
                 FlagTemp=0;
             }
         }
@@ -59,9 +59,9 @@ struct Tree {
                 PrintFormula();
             }
             else if(FlagTemp==1){
-                children[0].midOrder();
-                printf("U ");
-                children[1].midOrder();
+                children[0].PrintFormula();
+                printf("U");
+                children[1].PrintFormula();
                 FlagTemp=0;
             }
         }
@@ -73,11 +73,14 @@ struct Tree {
             }
             else if(FlagTemp==1){
                 printf("G");
-                FlagTemp=2;
-            }
-            else{
                 FlagTemp=0;
-                children[0].midOrder();
+                if(children[0].root.type!=NodeType_t::Atom){
+                    children[0].PrintFormula();
+                }else{
+                    printf("(");
+                    children[0].PrintFormula();
+                    printf(")");
+                }
             }
         }
         else if(n.type==NodeType_t::Exist_Next){
@@ -88,11 +91,14 @@ struct Tree {
             }
             else if(FlagTemp==1){
                 printf("X");
-                FlagTemp=2;
-            }
-            else{
                 FlagTemp=0;
-                children[0].midOrder();
+                if(children[0].root.type!=NodeType_t::Atom){
+                    children[0].PrintFormula();
+                }else{
+                    printf("(");
+                    children[0].PrintFormula();
+                    printf(")");
+                }
             }
         }
         else if(n.type==NodeType_t::Exist_Future){
@@ -103,11 +109,14 @@ struct Tree {
             }
             else if(FlagTemp==1){
                 printf("F");
-                FlagTemp=2;
-            }
-            else{
                 FlagTemp=0;
-                children[0].midOrder();
+                if(children[0].root.type!=NodeType_t::Atom){
+                    children[0].PrintFormula();
+                }else{
+                    printf("(");
+                    children[0].PrintFormula();
+                    printf(")");
+                }
             }
         }
         else if(n.type==NodeType_t::All_Global){
@@ -118,11 +127,14 @@ struct Tree {
             }
             else if(FlagTemp==1){
                 printf("G");
-                FlagTemp=2;
-            }
-            else{
                 FlagTemp=0;
-                children[0].midOrder();
+                if(children[0].root.type!=NodeType_t::Atom){
+                    children[0].PrintFormula();
+                }else{
+                    printf("(");
+                    children[0].PrintFormula();
+                    printf(")");
+                }
             }
         }
         else if(n.type==NodeType_t::All_Next){
@@ -133,11 +145,14 @@ struct Tree {
             }
             else if(FlagTemp==1){
                 printf("X");
-                FlagTemp=2;
-            }
-            else{
                 FlagTemp=0;
-                children[0].midOrder();
+                if(children[0].root.type!=NodeType_t::Atom){
+                    children[0].PrintFormula();
+                }else{
+                    printf("(");
+                    children[0].PrintFormula();
+                    printf(")");
+                }
             }
         }
         else if(n.type==NodeType_t::All_Future){
@@ -148,53 +163,64 @@ struct Tree {
             }
             else if(FlagTemp==1){
                 printf("F");
-                FlagTemp=2;
-            }
-            else{
                 FlagTemp=0;
-                children[0].midOrder();
+                if(children[0].root.type!=NodeType_t::Atom){
+                    children[0].PrintFormula();
+                }else{
+                    printf("(");
+                    children[0].PrintFormula();
+                    printf(")");
+                }
             }
         }
+        else if(n.type==NodeType_t::LogicOr){
+            children[0].PrintFormula();
+            std::cout<<root.token;
+            children[1].PrintFormula();
+        }
+        else if(n.type==NodeType_t::LogicAnd){
+            children[0].PrintFormula();
+            std::cout<<root.token;
+            children[1].PrintFormula();
+        } else{
+            std::cout<<root.token;
+        }
     }
-    void PrintFormula(){PrintFormulaWays(root);}
-    void PrintFormulaWays(ASTNode &n) {
+    void PrintFormula() {
             if (children.size() == 2) {
-                if(n.type!=NodeType_t::Implies&&n.type!=NodeType_t::LogicAnd&&n.type!=NodeType_t::LogicOr){
+                if(root.type==NodeType_t::LogicAnd||root.type==NodeType_t::LogicOr){
                     printf("(");
-                    Print(n);
+                    Print(root);
                     printf(")");
-                } else{
-                    children[0].midOrder();
-                    std::cout<<n.token<<" ";
-                    children[1].midOrder();
+                }
+                else if(root.type==NodeType_t::Implies){
+                    children[0].PrintFormula();
+                    std::cout<<root.token;
+                    children[1].PrintFormula();
+                }
+                else {
+                    printf("(");
+                    Print(root);
+                    printf(")");
                 }
             }
             else if(children.size() == 1){
-                if(n.type==NodeType_t::Not){
+                if(root.type==NodeType_t::Not){
+                    printf("(");
                     std::cout<<"~";
-                    children[0].midOrder();
+                    children[0].PrintFormula();
+                    printf(")");
                 } else{
                     printf("(");
-                    Print(root);
-                    children[0].midOrder();
+                    this->Print(root);
                     printf(")");
                 }
-
             }
             else{
-                std::cout<<n.token<<" ";
+                Print(root);
             }
     }
-
-    void midOrder() {
-        if (children.size() <= 1) {
-            PrintFormulaWays(root);
-            for (auto &c : children) c.midOrder();
-        }
-        else if(children.size() == 2){
-            PrintFormulaWays(root);
-        }
-    }
+    
         void tree_apply_xianxu(std::function<void(T &)> f) {
             f(root);
             for (auto &c : children) c.tree_apply_xianxu(f);

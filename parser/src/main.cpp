@@ -32,12 +32,7 @@ int main(int argc,char** argv) {
         getline(in, formula);
         if (Check(formula)) {
             auto *q = ParseQuery(formula);
-            auto *cur1 = q;
-            while (cur1 != nullptr) {
-                cur1->PrintFormula();
-                printf("\n");
-                cur1 = cur1->next;
-            }
+            q->PrintFormula();
             formula = "";
             printf("\n");
             delete q;

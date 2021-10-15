@@ -1,4 +1,3 @@
+AG(a&b)
+A(aUb)
 ~( (AF~A(aUb)) -> ( AF( (~a & ~b) v EGa) ) )
-
-
-
